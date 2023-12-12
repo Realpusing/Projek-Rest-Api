@@ -1,0 +1,201 @@
+/* General styling */
+body {
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Header */
+.navbar {
+    background-color: #f1f5f9;
+    padding: 1rem;
+}
+
+.navbar a {
+    margin-right: 1rem;
+    color: #333;
+    text-decoration: none;
+}
+
+/* Dashboard layout */
+.dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #ffffff;
+    padding: 1rem;
+    width: 250px;
+}
+
+.sidebar-menu {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar-menu li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.sidebar-menu li a:hover {
+    background-color: #f1f5f9;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    padding: 1rem;
+}
+
+/* Profile content */
+.profile-content {
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profile-content label {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.profile-content input[type="text"],
+.profile-content input[type="email"],
+.profile-content input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+}
+
+.profile-content input[type="text"]:focus,
+.profile-content input[type="email"]:focus,
+.profile-content input[type="password"]:focus {
+    border-color: #4caf50;
+}
+
+.profile-content button[type="submit"] {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.profile-content button[type="submit"]:hover {
+    background-color: #45a049;
+}
+.tab-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-menu {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.tab-menu button {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 16px;
+    transition: background-color 0.3s;
+}
+
+.tab-menu button:hover {
+    background-color: #ddd;
+}
+
+.tab-menu button.active {
+    background-color: #ccc;
+}
+
+.tab-content {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 16px;
+}
+.peminjaman-content {
+    /* Tambahkan gaya Anda di sini */
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+.pembatalan-content {
+    /* Tambahkan gaya Anda di sini */
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 10px;
+}
+.profil-kelas {
+    /* Tambahkan gaya Anda di sini */
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 10px;
+}
+.tab {
+    margin-right: 100px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.styled-table th,
+.styled-table td {
+    border: 1px solid #ffffff;
+    padding: 8px;
+    text-align: left;
+}
+
+.styled-table th {
+    background-color: #ffffff;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: rgb(255, 255, 255);
+}
+
+.styled-table tbody tr:hover {
+    background-color: rgb(255, 255, 255);
+}
+.success-message {
+    color: green;
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}

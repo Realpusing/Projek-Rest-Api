@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+logoSadhar {
+    width: 40px 800px;
+}

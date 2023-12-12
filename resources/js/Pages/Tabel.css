@@ -1,0 +1,20 @@
+.peminjaman-container {
+    margin-top: 20px;
+}
+
+.peminjaman-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.peminjaman-table th,
+.peminjaman-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.peminjaman-table th {
+    background-color: #3498db;
+    color: #fff;
+}
