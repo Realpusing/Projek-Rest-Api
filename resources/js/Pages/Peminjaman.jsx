@@ -26,7 +26,6 @@ function YourComponent() {
         </div>
     );
 }
-
 function Tabel() {
     const daysOfWeek = [
         "Senin",
@@ -42,33 +41,96 @@ function Tabel() {
     const [peminjaman, setPeminjaman] = useState({});
     const [buttonAPressed, setButtonAPressed] = useState(false);
 
-    const handleBoxClick = (day, hour) => {
-        if (!peminjaman[`${day}-${hour}`]) {
-            if (!buttonAPressed) {
-                setPeminjaman((prevPeminjaman) => ({
-                    ...prevPeminjaman,
-                    [`${day}-${hour}`]: !prevPeminjaman[`${day}-${hour}`],
-                }));
-            } else {
-                // Do nothing if Button A has been pressed and trying to change a green box
-                return;
-            }
-        } else if (buttonAPressed && peminjaman[`${day}-${hour}`] === false) {
-            // If Button A is pressed and trying to change a yellow box, allow changing to red
-            setPeminjaman((prevPeminjaman) => ({
-                ...prevPeminjaman,
-                [`${day}-${hour}`]: !prevPeminjaman[`${day}-${hour}`],
-            }));
-        }
+    // Simulasi data dari database
+    const dataFromDatabase = {
+        // Contoh data dari database (gunakan data dari database Anda)
+        "Senin-8": 1,
+        "Selasa-9": 0,
+        // ...
     };
 
-    const handleButtonAClick = () => {
+    useEffect(() => {
+        // Mengatur data peminjaman dari database saat komponen dimuat
+        setPeminjaman(dataFromDatabase);
+    }, []);
+
+    const handleBoxClick = (day, hour) => {
+        if (!buttonAPressed) {
+            // Tindakan saat tombol A tidak ditekan
+            if (peminjaman[`${day}-${hour}`] === 0 || !peminjaman[`${day}-${hour}`]) {
+                // Jika data adalah kuning (0) atau hijau (belum ada), maka saat diklik akan menjadi biru
+                setPeminjaman((prevPeminjaman) => ({
+                    ...prevPeminjaman,
+                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                }));
+            } else if (peminjaman[`${day}-${hour}`] === 1) {
+                // Jika data adalah merah (1), saat diklik akan menjadi biru (2)
+                setPeminjaman((prevPeminjaman) => ({
+                    ...prevPeminjaman,
+                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                }));
+            } else if (peminjaman[`${day}-${hour}`] === 2) {
+                // Jika data adalah biru (2), saat diklik akan menjadi hijau (0) kembali
+                setPeminjaman((prevPeminjaman) => ({
+                    ...prevPeminjaman,
+                    [`${day}-${hour}`]: 0, // Menjadikan hijau (0)
+                }));
+            }
+        } else {
+            // Tindakan saat tombol A ditekan
+            if (peminjaman[`${day}-${hour}`] === 0) {
+                // Jika data adalah kuning (0), saat diklik akan menjadi biru (2)
+                setPeminjaman((prevPeminjaman) => ({
+                    ...prevPeminjaman,
+                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                }));
+            }
+            // Jika tombol A ditekan, mengubah warna merah menjadi biru
+            if (peminjaman[`${day}-${hour}`] === 1) {
+                setPeminjaman((prevPeminjaman) => ({
+                    ...prevPeminjaman,
+                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                }));
+            }
+        }
+    }
+
+    const handleButtonAClick = async () => {
         setButtonAPressed(true);
+
+        // Mengubah semua warna biru (2) menjadi kuning (0)
+        const updatedPeminjaman = Object.fromEntries(
+            Object.entries(peminjaman).map(([key, value]) => {
+                if (value === 2) {
+                    return [key, 0]; // Mengubah biru (2) menjadi kuning (0)
+                }
+                return [key, value];
+            })
+        );
+
+        setPeminjaman(updatedPeminjaman);
+
+        // Kirim data ke server
+        try {
+            // Simulasi pengiriman data ke server dengan metode POST
+            const response = await fetch('url_database', {
+                method: 'POST',
+                body: JSON.stringify(updatedPeminjaman),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            console.log('Data telah dikirim ke database:', data);
+        } catch (error) {
+            console.error('Gagal mengirim data ke database:', error);
+        }
     };
 
     return (
         <div className="peminjaman-container">
             <p>Jadwal Tersedia</p>
+            <button onClick={handleButtonAClick}>Button A</button>
             <table className="peminjaman-table">
                 <thead>
                     <tr>
@@ -86,7 +148,7 @@ function Tabel() {
                                 <td key={`${day}-${hour}`}>
                                     <div
                                         className={`jbox ${
-                                            peminjaman[`${day}-${hour}`]
+                                            peminjaman[`${day}-${hour}`] === 1
                                                 ? "peminjaman"
                                                 : ""
                                         }`}
@@ -94,22 +156,20 @@ function Tabel() {
                                             handleBoxClick(day, hour)
                                         }
                                         style={{
-                                            backgroundColor: peminjaman[
-                                                `${day}-${hour}`
-                                            ]
-                                                ? "yellow"
-                                                : peminjaman[
-                                                      `${day}-${hour}`
-                                                  ] === false
-                                                ? "red"
-                                                : "green",
+                                            backgroundColor:
+                                                peminjaman[`${day}-${hour}`] === 1
+                                                    ? "red"
+                                                    : peminjaman[`${day}-${hour}`] === 0
+                                                    ? "yellow"
+                                                    : peminjaman[`${day}-${hour}`] === 2
+                                                    ? "blue"
+                                                    : "green",
                                         }}
                                     >
-                                        {peminjaman[`${day}-${hour}`]
-                                            ? "Proses"
-                                            : peminjaman[`${day}-${hour}`] ===
-                                              false
+                                        {peminjaman[`${day}-${hour}`] === 1
                                             ? "ACC"
+                                            : peminjaman[`${day}-${hour}`] === 0
+                                            ? "Proses"
                                             : "Tersedia"}
                                     </div>
                                 </td>
@@ -125,72 +185,71 @@ function Tabel() {
 
 
 
-function Komputer({ selectedImageId }) {
-  const [jumlahpc, setJumlahPc] = useState(data.jumlah_komputer);
-  const [buttonColors, setButtonColors] = useState(
-    new Array(jumlahpc).fill("#3498db")
-  );
 
-  useEffect(() => {
-    const fetchJumlahKomputer = async () => {
-      try {
-        if (selectedImageId) {
-          const response = await axios.get(`http://localhost:8000/api/kelas_tampil/${selectedImageId}`);
-          const { jumlah_komputer } = response.data; // Sesuaikan dengan respons yang benar dari server
-          setJumlahPc(jumlah_komputer);
-          setButtonColors(new Array(jumlah_komputer).fill("#3498db"));
+
+function Komputer({ selectedImageIdz, data }) {
+    const [jumlahpc, setJumlahPc] = useState(data ? data.jumlah_komputer : 31);
+    const [buttonColors, setButtonColors] = useState(new Array(jumlahpc).fill("#3498db"));
+  
+    useEffect(() => {
+      const fetchJumlahKomputer = async () => {
+        try {
+          if (selectedImageIdz) {
+            const response = await axios.get(`http://localhost:8000/api/kelas_tampil/${selectedImageIdz}`);
+            const { jumlah_komputer } = response.data; // Sesuaikan dengan respons yang benar dari server
+            setJumlahPc(jumlah_komputer);
+            setButtonColors(new Array(jumlah_komputer).fill("#3498db"));
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      };
+  
+      fetchJumlahKomputer();
+    }, [selectedImageIdz]);
+  
+    const handleButtonClick = (buttonNumber) => {
+      const updatedColors = [...buttonColors];
+  
+      if (updatedColors[buttonNumber - 1] === "#f28910") {
+        updatedColors[buttonNumber - 1] = "#3498db";
+      } else {
+        updatedColors[buttonNumber - 1] = "#f28910";
       }
+  
+      setButtonColors(updatedColors);
     };
-
-    fetchJumlahKomputer();
-  }, [selectedImageId]);
-
-  const handleButtonClick = (buttonNumber) => {
-    const updatedColors = [...buttonColors];
-
-    if (updatedColors[buttonNumber - 1] === "#f28910") {
-      updatedColors[buttonNumber - 1] = "#3498db";
-    } else {
-      updatedColors[buttonNumber - 1] = "#f28910";
+  
+    const buttonStyle = {
+      padding: "10px",
+      margin: "5px",
+      color: "#ffffff",
+      cursor: "pointer",
+    };
+  
+    const buttons = [];
+  
+    for (let i = 1; i <= jumlahpc; i++) {
+      buttons.push(
+        <button
+          key={i}
+          style={{ ...buttonStyle, backgroundColor: buttonColors[i - 1] }}
+          onClick={() => handleButtonClick(i)}
+        >
+          Komputer {i}
+        </button>,
+      );
     }
-
-    setButtonColors(updatedColors);
-  };
-
-  const buttonStyle = {
-    padding: "10px",
-    margin: "5px",
-    color: "#ffffff",
-    cursor: "pointer",
-  };
-
-  const buttons = [];
-
-  for (let i = 1; i <= jumlahpc; i++) {
-    buttons.push(
-      <button
-        key={i}
-        style={{ ...buttonStyle, backgroundColor: buttonColors[i - 1] }}
-        onClick={() => handleButtonClick(i)}
-      >
-        Komputer {i}
-      </button>,
-    );
+  
+    return <div>{buttons}</div>;
   }
-
-  return <div>{buttons}</div>;
-}
-
 
 
 
 
 export default function Homepage(proops) {
     console.log(proops);
-    const jumlahpc = 10;
+    const selectedImageId =1;
     const buttonStyle = {
         padding: "5px 10px",
         border: "1px solid #ccc",
@@ -263,7 +322,7 @@ export default function Homepage(proops) {
             </div>
             <div className="d-flex p-3" style={{ paddingLeft: "50px" }}>
                 <div className="scrollable-buttons">
-                    <Komputer />
+                <Komputer selectedImageIdz={selectedImageId} />
                 </div>
             </div>
 
