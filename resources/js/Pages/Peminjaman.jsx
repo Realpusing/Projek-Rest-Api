@@ -26,16 +26,21 @@ function YourComponent() {
         </div>
     );
 }
+
 function Tabel() {
-    const daysOfWeek = [
-        "Senin",
-        "Selasa",
-        "Rabu",
-        "Kamis",
-        "Jumat",
-        "Sabtu",
-        "Minggu",
-    ];
+    const today = new Date();
+    const daysOfWeek = [];
+    
+    for (let i = 0; i < 7; i++) {
+        const currentDate = new Date(today);
+        currentDate.setDate(today.getDate() + i);
+    
+        const month = currentDate.getMonth() + 1; // Mendapatkan bulan dalam format numerik (1-12)
+        const date = currentDate.getDate(); // Mendapatkan tanggal dalam format numerik (1-31)
+    
+        const formattedDate = `${date}-${month}`; // Menggabungkan nilai tanggal dan bulan
+        daysOfWeek.push(formattedDate);
+    }
     const hours = Array.from({ length: 8 }, (_, index) => index + 8);
 
     const [peminjaman, setPeminjaman] = useState({});
@@ -84,53 +89,53 @@ function Tabel() {
                     ...prevPeminjaman,
                     [`${day}-${hour}`]: 2, // Menjadikan biru (2)
                 }));
-            }
-            // Jika tombol A ditekan, mengubah warna merah menjadi biru
-            if (peminjaman[`${day}-${hour}`] === 1) {
+            } else if (peminjaman[`${day}-${hour}`] === 1 || peminjaman[`${day}-${hour}`] === 2) {
+                // Simpan nilai sebelumnya sebelum mengubah menjadi biru (2)
+                const previousColor = peminjaman[`${day}-${hour}`] === 1 ? 1 : 0; // Nilai merah (1) atau hijau (0) sebelumnya
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
                     [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                    // Simpan nilai sebelumnya di bawah ini
+                    [`previous-${day}-${hour}`]: previousColor, // Menyimpan nilai sebelumnya
                 }));
             }
         }
     }
-
+    
     const handleButtonAClick = async () => {
-        setButtonAPressed(true);
+    setButtonAPressed(true);
 
-        // Mengubah semua warna biru (2) menjadi kuning (0)
-        const updatedPeminjaman = Object.fromEntries(
-            Object.entries(peminjaman).map(([key, value]) => {
-                if (value === 2) {
-                    return [key, 0]; // Mengubah biru (2) menjadi kuning (0)
-                }
-                return [key, value];
-            })
-        );
+    const updatedPeminjaman = Object.fromEntries(
+        Object.entries(peminjaman).map(([key, value]) => {
+            if (value === 2) {
+                return [key, 0]; // Mengubah biru (2) menjadi kuning (0)
+            }
+            return [key, value];
+        })
+    );
 
-        setPeminjaman(updatedPeminjaman);
+    setPeminjaman(updatedPeminjaman);
 
-        // Kirim data ke server
-        try {
-            // Simulasi pengiriman data ke server dengan metode POST
-            const response = await fetch('url_database', {
-                method: 'POST',
-                body: JSON.stringify(updatedPeminjaman),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const data = await response.json();
-            console.log('Data telah dikirim ke database:', data);
-        } catch (error) {
-            console.error('Gagal mengirim data ke database:', error);
-        }
-    };
+    try {
+        const response = await fetch('http://localhost:8000/api/addpeminjaman', {
+            method: 'POST',
+            body: JSON.stringify(updatedPeminjaman),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        console.log('Data telah dikirim ke database:', data);
+    } catch (error) {
+        console.error('Gagal mengirim data ke database:', error);
+    }
 
-    return (
+};
+return (
+    <div>
         <div className="peminjaman-container">
             <p>Jadwal Tersedia</p>
-            <button onClick={handleButtonAClick}>Button A</button>
+
             <table className="peminjaman-table">
                 <thead>
                     <tr>
@@ -170,6 +175,8 @@ function Tabel() {
                                             ? "ACC"
                                             : peminjaman[`${day}-${hour}`] === 0
                                             ? "Proses"
+                                            : peminjaman[`${day}-${hour}`] === 2
+                                            ? "pilih"
                                             : "Tersedia"}
                                     </div>
                                 </td>
@@ -179,7 +186,96 @@ function Tabel() {
                 </tbody>
             </table>
         </div>
-    );
+
+        
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    padding: "15px",
+                    marginTop: "20px",
+                }}
+            >
+                <div style={{ margin: "10px 0" }}>
+                    <label htmlFor="my_modal_6" className="btn btn-success">
+                        Ajukan Peminjaman/pembatalan
+                    </label>
+                    <label
+                        htmlFor="my_modal_5"
+                        className="btn btn-success"
+                        style={{ marginLeft: "10px" }}
+                    >
+                        Hubungi admin
+                    </label>
+                </div>
+
+                {/* Modal 1 */}
+                <input type="checkbox" id="my_modal_6" className="modal-toggle" />
+                <div className="modal">
+                    <div className="modal-box">
+                        <div
+                            className="navbar bg-base-100"
+                            style={{ backgroundColor: "navy", color: "white" }}
+                        >
+                            <div className="flex-1">
+                                <a className="btn btn-ghost normal-case text-xl">
+                                    <div className="w-10 rounded-full">
+                                        <img src="asett/sadhar.png" />
+                                    </div>
+                                </a>
+                                <div>
+                                    <h1>
+                                        <b>Informatika</b>
+                                    </h1>
+                                    <h1>Fakultas Sains Dan Teknologi</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <p className="py-4" style={{ fontSize: "25px" }}>
+                            Apakah ada yakin ingin meminjam/pembatalan komputer ini?
+                        </p>
+                        <div className="modal-action">
+                        <label htmlFor="my_modal_6" className="btn" onClick={handleButtonAClick}>
+                            Ajukan Peminjaman atau pembatalan
+                        </label>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Modal 2 */}
+                <input type="checkbox" id="my_modal_5" className="modal-toggle" />
+                <div className="modal">
+                    <div className="modal-box">
+                        <div
+                            className="navbar bg-base-100"
+                            style={{ backgroundColor: "navy", color: "white" }}
+                        >
+                            <div className="flex-1">
+                                <a className="btn btn-ghost normal-case text-xl">
+                                    <div className="w-10 rounded-full">
+                                        <img src="asett/sadhar.png" />
+                                    </div>
+                                </a>
+                                <div>
+                                    <h1>
+                                        <b>Informatika</b>
+                                    </h1>
+                                    <h1>Fakultas Sains Dan Teknologi</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <p className="py-4" style={{ fontSize: "25px" }}>
+                            Apakah ada yakin ingin menghubungi admin?
+                        </p>
+                        <YourComponent />
+                    </div>
+                </div>
+            
+            
+        </div>
+    </div>
+);
+
 }
 
 
@@ -346,98 +442,7 @@ export default function Homepage(proops) {
                 </tabel>
             </div>
             <br />
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    padding: "15px",
-                    marginTop: "20px",
-                }}
-            >
-                <div style={{ margin: "10px 0" }}>
-                    <label htmlFor="my_modal_6" className="btn btn-success">
-                        Ajukan Peminjaman/pembatalan
-                    </label>
-                    <label
-                        htmlFor="my_modal_5"
-                        className="btn btn-success"
-                        style={{ marginLeft: "10px" }}
-                    >
-                        Hubungi admin
-                    </label>
-                </div>
-
-                {/* Put this part before </body> tag */}
-                <input
-                    type="checkbox"
-                    id="my_modal_6"
-                    className="modal-toggle"
-                />
-                <div className="modal">
-                    <div className="modal-box">
-                        <div
-                            className="navbar bg-base-100"
-                            style={{ backgroundColor: "navy", color: "white" }}
-                        >
-                            <div className="flex-1">
-                                <a className="btn btn-ghost normal-case text-xl">
-                                    <div className="w-10 rounded-full">
-                                        <img src="asett/sadhar.png" />
-                                    </div>
-                                </a>
-                                <div>
-                                    <h1>
-                                        <b>Informatika</b>
-                                    </h1>
-                                    <h1>Fakultas Sains Dan Teknologi</h1>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="py-4" style={{ fontSize: "25px" }}>
-                            Apakah ada yakin ingin meminjam/pembatalan komputer
-                            ini ?
-                        </p>
-                        <div className="modal-action">
-                            <label htmlFor="my_modal_6" className="btn">
-                                Ajukan Peminjaman atau pembatalan
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <input
-                    type="checkbox"
-                    id="my_modal_5"
-                    className="modal-toggle"
-                />
-
-                <div className="modal">
-                    <div className="modal-box">
-                        <div
-                            className="navbar bg-base-100"
-                            style={{ backgroundColor: "navy", color: "white" }}
-                        >
-                            <div className="flex-1">
-                                <a className="btn btn-ghost normal-case text-xl">
-                                    <div className="w-10 rounded-full">
-                                        <img src="asett/sadhar.png" />
-                                    </div>
-                                </a>
-                                <div>
-                                    <h1>
-                                        <b>Informatika</b>
-                                    </h1>
-                                    <h1>Fakultas Sains Dan Teknologi</h1>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="py-4" style={{ fontSize: "25px" }}>
-                            Apakah ada yakin ingin mengubungi admin ? ?
-                        </p>
-
-                        <YourComponent />
-                    </div>
-                </div>
-            </div>
+            
         </div>
     );
 }

@@ -16,3 +16,5 @@ Route::get('ambil-gambar/{dir}/{filename}', [Kelas_Controller::class, 'ambilGamb
 Route::post('ambil-gambar', [Kelas_Controller::class, 'ambilGambar']);
 Route::get('panggil',[hubAdmin::class,'panggilan']);
 Route::get('peminjamen', [PeminjamenController::class, 'peminjamentampil']);
+
+Route::post('addpeminjaman', [PeminjamenController::class, 'addpeminjmanes']);
