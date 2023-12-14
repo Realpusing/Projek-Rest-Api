@@ -428,51 +428,5 @@ export default function Homepage(proops) {
         width: "14.28%",
     };
 
-    return (
-        <div>
-            <Head title="Foundasi-App" />
-            <Navbar user={proops.auth.user} />
-
-            <div
-                className="d-flex p-3"
-                style={{ marginTop: "20px", paddingLeft: "50px" }}
-            >
-                <b style={{ fontSize: "30px" }}>Jadwal Komputer</b>
-            </div>
-
-            <div
-                className="d-flex p-3"
-                style={{ marginTop: "20px", paddingLeft: "50px" }}
-            >
-                <b style={{ fontSize: "20px" }}>Pilihan Komputer</b>
-            </div>
-            <div className="d-flex p-3" style={{ paddingLeft: "50px" }}>
-                <div className="scrollable-buttons">
-                <Komputer selectedImageIdz={selectedImageId} />
-                </div>
-            </div>
-
-            <div
-                className="d-flex p-3"
-                style={{ marginTop: "20px", paddingLeft: "50px" }}
-            >
-                <b style={{ fontSize: "20px" }}>Tujuan Peminjaman</b>
-                <br />
-                <input type="text" style={inputStyle} />
-            </div>
-            <div
-                className="d-flex p-3"
-                style={{ marginTop: "20px", paddingLeft: "50px" }}
-            ></div>
-            <br />
-            <br />
-            <div className="overflow-x-auto">
-                <tabel>
-                    <Tabel />
-                </tabel>
-            </div>
-            <br />
-            
-        </div>
-    );
+    
 }
