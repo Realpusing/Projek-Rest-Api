@@ -1,6 +1,7 @@
 import { Link } from "@inertiajs/react";
 
 const Navbar = ({ user, toggleSidebar }) => {
+    
     return (
         <nav>
             <div
@@ -41,11 +42,11 @@ const Navbar = ({ user, toggleSidebar }) => {
                                         Edit Profile
                                     </Link>
                                 </li>
-                                {/* <li>
+                                <li>
                                 <Link href={route("register")} as="button">
                                     Register
                                 </Link>
-                            </li> */}
+                            </li>
                                 <li>
                                     <Link>Bantuan</Link>
                                 </li>
@@ -69,7 +70,7 @@ const Navbar = ({ user, toggleSidebar }) => {
                                     <Link>Bantuan</Link>
                                 </li>
                                 <li>
-                                    <Link>Logout</Link>
+                                    <Link href="/logout" method="post">Logout</Link>
                                 </li>
                             </>
                         )}

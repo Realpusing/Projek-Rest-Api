@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idadmin');
             $table->string('namakelas');
             $table->integer('jumlah_komputer'); // Use 'integer' instead of 'int'
-            $table->binary('fotokelas'); // Use 'binary' instead of 'blob'
+            $table->string('fotokelas'); // Use 'binary' instead of 'blob'
             $table->foreign('idadmin')->references('id')->on('admin');
             $table->timestamps();
         });

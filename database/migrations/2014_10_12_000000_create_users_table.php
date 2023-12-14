@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->binary('fotoProfil'); // Use 'binary' instead of 'blob'
+            $table->binary('fotoProfil')->nullable(); // Use 'binary' instead of 'blob'
             $table->rememberToken();
             $table->timestamps();
         });

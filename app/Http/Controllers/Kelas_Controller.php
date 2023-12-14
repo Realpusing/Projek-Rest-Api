@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\kelas; // Pastikan Anda mengimpor atau menggunakan namespace yang benar untuk model Post
 use Faker\Core\File;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class Kelas_Controller extends Controller
         $kelas->idadmin =$req ->input('idadmin');
         $kelas->namakelas =$req -> input ('namakelas');
         $kelas->jumlah_komputer =$req-> input('jumlah_komputer');
-        $kelas->fotoke = $req->file('file')->store('fotokelas');
+        $kelas->fotokelas = $req->file('file')->store('fotokelas');
         $kelas->save();
         return $req->input();
     }
