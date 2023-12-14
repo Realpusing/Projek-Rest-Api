@@ -32,9 +32,18 @@ function Tabel() {
     const [alasanPeminjamanArray, setAlasanPeminjamanArray] = useState([]);
 
     const [selectedImageIdz, setSelectedImageIdz] = useState(null);
-
+    const [jumlahButtonDitekan, setJumlahButtonDitekan] = useState(0);
     const [jumlahpc, setJumlahPc] = useState(31); // Definisikan jumlahpc dengan nilai default
     const [buttonColors, setButtonColors] = useState(new Array(jumlahpc).fill("#3498db"));
+
+    
+
+    const [dataPeminjaman, setDataPeminjaman] = useState({}); // State untuk menyimpan data peminjaman
+
+  const handleSimpanAlasan = () => {
+    // Menyimpan data alasan peminjaman ke dalam objek dataPeminjaman
+    
+  };
   //komputer
     useEffect(() => {
       const search = window.location.search;
@@ -64,16 +73,23 @@ function Tabel() {
     }, [selectedImageIdz]);
   
     const handleButtonClick = (buttonNumber) => {
-      const updatedColors = [...buttonColors];
-  
-      if (updatedColors[buttonNumber - 1] === "#f28910") {
-        updatedColors[buttonNumber - 1] = "#3498db";
-      } else {
-        updatedColors[buttonNumber - 1] = "#f28910";
-      }
-  
-      setButtonColors(updatedColors);
-    };
+        const updatedColors = [...buttonColors];
+      
+        if (updatedColors[buttonNumber - 1] === "#f28910") {
+          updatedColors[buttonNumber - 1] = "#3498db";
+          setJumlahButtonDitekan((prevCount) => prevCount - 1); // Menambah jumlah button yang ditekan
+        } else {
+          updatedColors[buttonNumber - 1] = "#f28910";
+          setJumlahButtonDitekan((prevCount) => prevCount + 1); // Mengurangi jumlah button yang ditekan
+        }
+      
+        setButtonColors(updatedColors);
+      };
+      
+      // ...
+      
+      // Untuk menampilkan jumlah button yang telah ditekan
+      console.log(`Jumlah button yang ditekan: ${jumlahButtonDitekan}`);
   
     const buttonStyle = {
       padding: "10px",
@@ -214,7 +230,21 @@ function Tabel() {
     
     
     const handleButtonAClick = async () => {
+        const formData = new FormData();
+
+            setDataPeminjaman(prevData => ({
+            ...prevData,
+            alasanPeminjaman: alasanPeminjaman
+          }));
+      
+          // Reset input alasan peminjaman setelah disimpan
+          console.log(alasanPeminjaman)
+          console.log(selectedImageIdz)
+          console.log(jumlahButtonDitekan)
+          
+          setAlasanPeminjaman('');
         setButtonAPressed(true);
+        
         if (alasanPeminjaman.trim() !== '') {
             // Buat salinan array sebelumnya dan tambahkan nilai alasan baru
             const updatedAlasanPeminjamanArray = [...alasanPeminjamanArray, alasanPeminjaman];
@@ -259,7 +289,19 @@ function Tabel() {
           const tabelKuningEnd = tabelKuning.map((key) => tambahSatuJam(key));
           
           console.log("Tabel kuning end:", tabelKuningEnd);
+          for (let i = 0; i < tabelKuning.length; i++) {
+            formData.append('idkomputer', 1);
+            formData.append('idkelas', selectedImageIdz);
+            formData.append('iduser', 1);
+            formData.append('idadmin', 1);
+            formData.append('jumlahPinjam', jumlahButtonDitekan);
+            formData.append('alasan', alasanPeminjaman);
+            formData.append('status', 0);
+            formData.append('tanggal_dan_jam_pinjam', tabelKuning[i]);
+            formData.append('tanggal_dan_jam_kembali', tabelKuningEnd[i]);
+            
         try {
+            
             const response = await fetch('http://localhost:8000/api/addpeminjaman', {
                 method: 'POST',
                 body: formData,
@@ -271,20 +313,10 @@ function Tabel() {
         } catch (error) {
             console.error('Gagal mengirim data ke database:', error);
         }
-
-        const formData = new FormData();
-        formData.append('idkomputer', 1);
-        formData.append('idkelas',selectedImageIdz );
-        formData.append('iduser', 1);
-        formData.append('idadmin', 1);
-        formData.append('jumlahPinjam',jumlahpc );
-        formData.append('alasan', alasanPeminjaman);
-        formData.append('status', 0);
-        formData.append('tanggal_dan_jam_pinjam', tabelKuning);
-        formData.append('tanggal_dan_jam_kembali', tabelKuningEnd);
-
+    }
 
     };
+    
     const inputStyle = {
         width: "300px", // Lebar elemen input
         height: "60px", // Tinggi elemen input
@@ -298,7 +330,10 @@ function Tabel() {
 return (
     
     <div>
-        
+         
+      
+      
+    
      
              <div
                 className="d-flex p-3"
