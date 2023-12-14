@@ -21,6 +21,22 @@ class Kelas_Controller extends Controller
         $kelas->save();
         return $req->input();
     }
+
+    public function ambilid(Request $req, $id){
+        try {
+            $komputer = kelas::find($id);
+
+            if (!$komputer) {
+                return response()->json(['message' => 'Komputer not found'], 404);
+            }
+
+            $jumlahKomputer = $komputer->jumlah_komputer;
+
+            return response()->json(['jumlah_komputer' => $jumlahKomputer], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch jumlah komputer', 'error' => $e->getMessage()], 500);
+        }
+    }
     
     public function kelastampil()
     {

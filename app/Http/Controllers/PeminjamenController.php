@@ -13,6 +13,11 @@ class PeminjamenController extends Controller
         $peminjaman = Peminjamens::with('user')->get();
         return response()->json($peminjaman);
     }
+    public function pemitampil()
+    {
+        return Peminjamens::all();
+    }
+    
 
     public function addpeminjmanes(Request $req)
     {

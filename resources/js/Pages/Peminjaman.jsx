@@ -28,9 +28,76 @@ function YourComponent() {
 }
 
 function Tabel() {
+    const [alasanPeminjaman, setAlasanPeminjaman] = useState(''); // Definisikan state untuk menyimpan alasan peminjaman
+    const [alasanPeminjamanArray, setAlasanPeminjamanArray] = useState([]);
+
+    const [selectedImageIdz, setSelectedImageIdz] = useState(null);
+
+    const [jumlahpc, setJumlahPc] = useState(31); // Definisikan jumlahpc dengan nilai default
+    const [buttonColors, setButtonColors] = useState(new Array(jumlahpc).fill("#3498db"));
+  //komputer
+    useEffect(() => {
+      const search = window.location.search;
+      const params = new URLSearchParams(search);
+      const idFromURL = params.get('id');
+  
+      if (idFromURL) {
+        setSelectedImageIdz(idFromURL);
+      }
+    }, []);
+  
+    useEffect(() => {
+      const fetchJumlahKomputer = async () => {
+        try {
+          if (selectedImageIdz) {
+            const response = await axios.get(`http://localhost:8000/api/komputer/${selectedImageIdz}`);
+            const { jumlah_komputer } = response.data; // Sesuaikan dengan respons yang benar dari server
+            setJumlahPc(jumlah_komputer);
+            setButtonColors(new Array(jumlah_komputer).fill("#3498db"));
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+  
+      fetchJumlahKomputer();
+    }, [selectedImageIdz]);
+  
+    const handleButtonClick = (buttonNumber) => {
+      const updatedColors = [...buttonColors];
+  
+      if (updatedColors[buttonNumber - 1] === "#f28910") {
+        updatedColors[buttonNumber - 1] = "#3498db";
+      } else {
+        updatedColors[buttonNumber - 1] = "#f28910";
+      }
+  
+      setButtonColors(updatedColors);
+    };
+  
+    const buttonStyle = {
+      padding: "10px",
+      margin: "5px",
+      color: "#ffffff",
+      cursor: "pointer",
+    };
+  
+    const buttons = [];
+  //sampai sini
+    for (let i = 1; i <= jumlahpc; i++) {
+      buttons.push(
+        <button
+          key={i}
+          style={{ ...buttonStyle, backgroundColor: buttonColors[i - 1] }}
+          onClick={() => handleButtonClick(i)}
+        >
+          Komputer {i}
+        </button>,
+      );
+    }
     const today = new Date();
     today.setDate(today.getDate() + 1); // Menambah satu hari ke tanggal saat ini
-    
+    const [updatedPeminjaman, setUpdatedPeminjaman] = useState({});
     const daysOfWeek = [];
     
     for (let i = 0; i < 7; i++) {
@@ -45,24 +112,70 @@ function Tabel() {
         daysOfWeek.push(formattedDate);
     }
     const hours = Array.from({ length: 8 }, (_, index) => index + 8);
-
     const [peminjaman, setPeminjaman] = useState({});
     const [buttonAPressed, setButtonAPressed] = useState(false);
+    const [history, setHistory] = useState([]);
 
+    
     // Simulasi data dari database
-    const dataFromDatabase = {
-      
-
-    };
-
     useEffect(() => {
-        // Mengatur data peminjaman dari database saat komponen dimuat
-        setPeminjaman(dataFromDatabase);
-    }, []);
+        const fetchData = async () => {
+          try {
+            const response = await axios.get('http://localhost:8000/api/peminjamez');
+            const { data } = response;
+            
+            const formattedData = data.map(item => {
+              const { tanggal_dan_jam_pinjam } = item;
+              return `${tanggal_dan_jam_pinjam}`;
+            });
+      
+            return formattedData;
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            return [];
+          }
+        };
+        
+        const stats = async () => {
+          try {
+            const response = await axios.get('http://localhost:8000/api/peminjamez');
+            const { data } = response;
+      
+            const statusData = data.map(item => {
+              const { status } = item;
+              return `${status}`;
+            });
+      
+            return statusData;
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            return [];
+          }
+        };
+      
+        Promise.all([fetchData(), stats()])
+          .then(([fetchDataResult, statsResult]) => {
+            if (Array.isArray(fetchDataResult) && Array.isArray(statsResult) && fetchDataResult.length === statsResult.length) {
+              const dataFromDatabase = {};
+              fetchDataResult.forEach((item, index) => {
+                // Menghapus spasi ekstra pada awal dan akhir tanggal
+                const formattedDate = item.trim();
+                dataFromDatabase[formattedDate] = parseInt(statsResult[index]);
+              });
+      
+              console.log(dataFromDatabase);
+              setPeminjaman(dataFromDatabase);
+            } else {
+              console.error('Invalid data structure or length mismatch.');
+            }
+          })
+          .catch(error => console.error('Error:', error));
+      }, []);
 
+   
+    
     const handleBoxClick = (day, hour) => {
         if (!buttonAPressed) {
-            // Saat tombol A tidak ditekan
             if (peminjaman[`${day}-${hour}`] === 0 || !peminjaman[`${day}-${hour}`]) {
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
@@ -83,7 +196,6 @@ function Tabel() {
                 }));
             }
         } else {
-            // Saat tombol A ditekan
             if (peminjaman[`${day}-${hour}`] === 0) {
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
@@ -100,9 +212,22 @@ function Tabel() {
         }
     };
     
+    
     const handleButtonAClick = async () => {
         setButtonAPressed(true);
-        
+        if (alasanPeminjaman.trim() !== '') {
+            // Buat salinan array sebelumnya dan tambahkan nilai alasan baru
+            const updatedAlasanPeminjamanArray = [...alasanPeminjamanArray, alasanPeminjaman];
+            
+            // Simpan nilai alasan peminjaman ke dalam state alasanPeminjamanArray
+            setAlasanPeminjamanArray(updatedAlasanPeminjamanArray);
+            
+            // Lakukan sesuatu dengan nilai alasan peminjaman yang disimpan, misalnya mencetaknya ke konsol
+            console.log('Array Alasan Peminjaman:', updatedAlasanPeminjamanArray);
+        } else {
+            // Tampilkan pesan kesalahan jika alasan peminjaman kosong
+            console.error('Alasan Peminjaman tidak boleh kosong.');
+        }
         const updatedPeminjaman = Object.fromEntries(
             Object.entries(peminjaman).map(([key, value]) => {
                 if (value === 2) {
@@ -111,25 +236,93 @@ function Tabel() {
                 return [key, value];
             })
         );
-    
+         // Menyimpan tabel yang telah diganti menjadi warna kuning ke dalam sebuah array
+        const tabelKuning = Object.entries(updatedPeminjaman)
+        .filter(([key, value]) => value === 0)
+        .map(([key, value]) => key);
+
+// Lakukan sesuatu dengan array 'tabelKuning', misalnya menyimpannya atau melakukan operasi lainnya
+        console.log('Tabel yang berwarna kuning:', tabelKuning);
         setPeminjaman(updatedPeminjaman);
-    
+        const tambahSatuJam = (key) => {
+            const splitKey = key.split('-'); // Memisahkan kunci menjadi bagian-bagian yang terpisah
+            const year = splitKey[0];
+            const month = splitKey[1];
+            const date = splitKey[2];
+            const hour = parseInt(splitKey[3]) + 1; // Menambah satu jam
+            
+            const newKey = `${year}-${month}-${date}-${hour}`; // Membuat kunci baru dengan tambahan satu jam
+            return newKey;
+          };
+          
+          // Mengaplikasikan fungsi untuk menambah satu jam pada tabel kuning
+          const tabelKuningEnd = tabelKuning.map((key) => tambahSatuJam(key));
+          
+          console.log("Tabel kuning end:", tabelKuningEnd);
         try {
             const response = await fetch('http://localhost:8000/api/addpeminjaman', {
                 method: 'POST',
-                body: JSON.stringify(updatedPeminjaman),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                body: formData,
+                
+                
             });
             const data = await response.json();
             console.log('Data telah dikirim ke database:', data);
         } catch (error) {
             console.error('Gagal mengirim data ke database:', error);
         }
+
+        const formData = new FormData();
+        formData.append('idkomputer', 1);
+        formData.append('idkelas',selectedImageIdz );
+        formData.append('iduser', 1);
+        formData.append('idadmin', 1);
+        formData.append('jumlahPinjam',jumlahpc );
+        formData.append('alasan', alasanPeminjaman);
+        formData.append('status', 0);
+        formData.append('tanggal_dan_jam_pinjam', tabelKuning);
+        formData.append('tanggal_dan_jam_kembali', tabelKuningEnd);
+
+
+    };
+    const inputStyle = {
+        width: "300px", // Lebar elemen input
+        height: "60px", // Tinggi elemen input
+        background: "navy", // Warna latar belakang biru tua
+        color: "white", // Warna teks putih
+        border: "1px solid white", // Warna border putih
+        borderRadius: "5px", // Sudut elemen bulat
+        verticalAlign: "top", // Mengatur inputan dimulai dari atas
+        maxWidth: "100%",
     };
 return (
+    
     <div>
+        
+     
+             <div
+                className="d-flex p-3"
+                style={{ marginTop: "20px", paddingLeft: "50px" }}
+            >
+                <b style={{ fontSize: "20px" }}>Pilihan Komputer</b>
+            </div>
+            {/* Menampilkan jumlah komputer yang diperoleh dari database */}
+            <p>Jumlah Komputer: {jumlahpc}</p>
+            <div>{buttons}</div>
+            <div
+                className="d-flex p-3"
+                style={{ marginTop: "20px", paddingLeft: "50px" }}
+            >
+                 
+                <b style={{ fontSize: "20px" }}>Tujuan Peminjaman</b>
+                <br />
+                <input
+                type="text"
+                style={inputStyle}
+                value={alasanPeminjaman}
+                onChange={(e) => setAlasanPeminjaman(e.target.value)}
+            />
+            </div>
         <div className="peminjaman-container">
             <p>Jadwal Tersedia</p>
 
@@ -280,95 +473,6 @@ return (
 
 
 
-function Komputer({ selectedImageIdz }) {
-    const handleButtonAClick = async () => {
-        setButtonAPressed(true);
-        
-        const updatedPeminjaman = Object.fromEntries(
-            Object.entries(peminjaman).map(([key, value]) => {
-                if (value === 2) {
-                    return [key, 0]; // Mengubah biru (2) menjadi kuning (0)
-                }
-                return [key, value];
-            })
-        );
-    
-        setPeminjaman(updatedPeminjaman);
-    
-        try {
-            const response = await axios.post('http://localhost:8000/api/addpeminjaman', updatedPeminjaman);
-            console.log('Data telah dikirim ke database:', response.data);
-            // Lakukan tindakan setelah berhasil mengirim data ke backend, jika diperlukan
-        } catch (error) {
-            console.error('Gagal mengirim data ke database:', error);
-            // Tangani kesalahan saat mengirim permintaan ke server
-        }
-    };
-    
-    
-    const [jumlahpc, setJumlahPc] = useState(31); // Nilai default jika tidak ada data
-    const [buttonColors, setButtonColors] = useState(new Array(jumlahpc).fill("#3498db"));
-    
-    useEffect(() => {
-      const fetchJumlahKomputer = async () => {
-        try {
-          if (selectedImageIdz) {
-            const response = await axios.get(`http://localhost:8000/api/kelas_tampil/${selectedImageIdz}`);
-            const { jumlah_komputer } = response.data; // Sesuaikan dengan respons yang benar dari server
-            setJumlahPc(jumlah_komputer);
-            setButtonColors(new Array(jumlah_komputer).fill("#3498db"));
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchJumlahKomputer();
-    }, [selectedImageIdz]);
-  
-    const handleButtonClick = (buttonNumber) => {
-      const updatedColors = [...buttonColors];
-  
-      if (updatedColors[buttonNumber - 1] === "#f28910") {
-        updatedColors[buttonNumber - 1] = "#3498db";
-      } else {
-        updatedColors[buttonNumber - 1] = "#f28910";
-      }
-  
-      setButtonColors(updatedColors);
-    };
-  
-    const buttonStyle = {
-      padding: "10px",
-      margin: "5px",
-      color: "#ffffff",
-      cursor: "pointer",
-    };
-  
-    const buttons = [];
-  
-    for (let i = 1; i <= jumlahpc; i++) {
-      buttons.push(
-        <button
-          key={i}
-          style={{ ...buttonStyle, backgroundColor: buttonColors[i - 1] }}
-          onClick={() => handleButtonClick(i)}
-        >
-          Komputer {i}
-        </button>,
-      );
-    }
-  
-    return (
-      <div>
-        {/* Menampilkan jumlah komputer yang diperoleh dari database */}
-        <p>Jumlah Komputer: {jumlahpc}</p>
-        <div>{buttons}</div>
-      </div>
-    );
-  }
-
-
 
 
 export default function Homepage(proops) {
@@ -438,26 +542,8 @@ export default function Homepage(proops) {
                 <b style={{ fontSize: "30px" }}>Jadwal Komputer</b>
             </div>
 
-            <div
-                className="d-flex p-3"
-                style={{ marginTop: "20px", paddingLeft: "50px" }}
-            >
-                <b style={{ fontSize: "20px" }}>Pilihan Komputer</b>
-            </div>
-            <div className="d-flex p-3" style={{ paddingLeft: "50px" }}>
-                <div className="scrollable-buttons">
-                <Komputer selectedImageIdz={selectedImageId} />
-                </div>
-            </div>
-
-            <div
-                className="d-flex p-3"
-                style={{ marginTop: "20px", paddingLeft: "50px" }}
-            >
-                <b style={{ fontSize: "20px" }}>Tujuan Peminjaman</b>
-                <br />
-                <input type="text" style={inputStyle} />
-            </div>
+           
+           
             <div
                 className="d-flex p-3"
                 style={{ marginTop: "20px", paddingLeft: "50px" }}
@@ -474,3 +560,14 @@ export default function Homepage(proops) {
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
