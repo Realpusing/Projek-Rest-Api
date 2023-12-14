@@ -29,16 +29,19 @@ function YourComponent() {
 
 function Tabel() {
     const today = new Date();
+    today.setDate(today.getDate() + 1); // Menambah satu hari ke tanggal saat ini
+    
     const daysOfWeek = [];
     
     for (let i = 0; i < 7; i++) {
         const currentDate = new Date(today);
         currentDate.setDate(today.getDate() + i);
     
-        const month = currentDate.getMonth() + 1; // Mendapatkan bulan dalam format numerik (1-12)
-        const date = currentDate.getDate(); // Mendapatkan tanggal dalam format numerik (1-31)
+        const year = currentDate.getFullYear(); // Mendapatkan tahun dalam format numerik (e.g., 2023)
+        const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // Mendapatkan bulan dalam format numerik (01-12)
+        const date = ('0' + currentDate.getDate()).slice(-2); // Mendapatkan tanggal dalam format numerik (01-31)
     
-        const formattedDate = `${date}-${month}`; // Menggabungkan nilai tanggal dan bulan
+        const formattedDate = `${year}-${month}-${date}`; // Menggabungkan nilai tahun, bulan, dan tanggal
         daysOfWeek.push(formattedDate);
     }
     const hours = Array.from({ length: 8 }, (_, index) => index + 8);
@@ -49,9 +52,9 @@ function Tabel() {
     // Simulasi data dari database
     const dataFromDatabase = {
         // Contoh data dari database (gunakan data dari database Anda)
-        "Senin-8": 1,
-        "Selasa-9": 0,
-        // ...
+        "2023-12-14": 1,
+        "2023-12-13": 0,
+        "2023-12-16": 2,
     };
 
     useEffect(() => {
@@ -61,76 +64,72 @@ function Tabel() {
 
     const handleBoxClick = (day, hour) => {
         if (!buttonAPressed) {
-            // Tindakan saat tombol A tidak ditekan
+            // Saat tombol A tidak ditekan
             if (peminjaman[`${day}-${hour}`] === 0 || !peminjaman[`${day}-${hour}`]) {
-                // Jika data adalah kuning (0) atau hijau (belum ada), maka saat diklik akan menjadi biru
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
-                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                    [`${day}-${hour}`]: 2, // Mengubah kuning (0) atau hijau (belum ada) menjadi biru (2)
                 }));
             } else if (peminjaman[`${day}-${hour}`] === 1) {
-                // Jika data adalah merah (1), saat diklik akan menjadi biru (2)
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
-                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                    [`${day}-${hour}`]: 2, // Mengubah merah (1) menjadi biru (2)
                 }));
             } else if (peminjaman[`${day}-${hour}`] === 2) {
-                // Jika data adalah biru (2), saat diklik akan menjadi hijau (0) kembali
+                // Mengembalikan biru (2) ke warna sebelumnya (0 atau 1)
+                const previousColor = peminjaman[`previous-${day}-${hour}`]; // Mendapatkan nilai sebelumnya
+    
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
-                    [`${day}-${hour}`]: 0, // Menjadikan hijau (0)
+                    [`${day}-${hour}`]: previousColor, // Mengembalikan ke warna sebelumnya
                 }));
             }
         } else {
-            // Tindakan saat tombol A ditekan
+            // Saat tombol A ditekan
             if (peminjaman[`${day}-${hour}`] === 0) {
-                // Jika data adalah kuning (0), saat diklik akan menjadi biru (2)
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
-                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
+                    [`${day}-${hour}`]: 2, // Mengubah kuning (0) menjadi biru (2)
                 }));
             } else if (peminjaman[`${day}-${hour}`] === 1 || peminjaman[`${day}-${hour}`] === 2) {
-                // Simpan nilai sebelumnya sebelum mengubah menjadi biru (2)
                 const previousColor = peminjaman[`${day}-${hour}`] === 1 ? 1 : 0; // Nilai merah (1) atau hijau (0) sebelumnya
                 setPeminjaman((prevPeminjaman) => ({
                     ...prevPeminjaman,
-                    [`${day}-${hour}`]: 2, // Menjadikan biru (2)
-                    // Simpan nilai sebelumnya di bawah ini
+                    [`${day}-${hour}`]: 2, // Mengubah merah (1) atau biru (2) menjadi biru (2)
                     [`previous-${day}-${hour}`]: previousColor, // Menyimpan nilai sebelumnya
                 }));
             }
         }
-    }
+    };
     
     const handleButtonAClick = async () => {
-    setButtonAPressed(true);
-
-    const updatedPeminjaman = Object.fromEntries(
-        Object.entries(peminjaman).map(([key, value]) => {
-            if (value === 2) {
-                return [key, 0]; // Mengubah biru (2) menjadi kuning (0)
-            }
-            return [key, value];
-        })
-    );
-
-    setPeminjaman(updatedPeminjaman);
-
-    try {
-        const response = await fetch('http://localhost:8000/api/addpeminjaman', {
-            method: 'POST',
-            body: JSON.stringify(updatedPeminjaman),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const data = await response.json();
-        console.log('Data telah dikirim ke database:', data);
-    } catch (error) {
-        console.error('Gagal mengirim data ke database:', error);
-    }
-
-};
+        setButtonAPressed(true);
+        
+        const updatedPeminjaman = Object.fromEntries(
+            Object.entries(peminjaman).map(([key, value]) => {
+                if (value === 2) {
+                    return [key, 0]; // Mengubah biru (2) menjadi kuning (0)
+                }
+                return [key, value];
+            })
+        );
+    
+        setPeminjaman(updatedPeminjaman);
+    
+        try {
+            const response = await fetch('http://localhost:8000/api/addpeminjaman', {
+                method: 'POST',
+                body: JSON.stringify(updatedPeminjaman),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            console.log('Data telah dikirim ke database:', data);
+        } catch (error) {
+            console.error('Gagal mengirim data ke database:', error);
+        }
+    };
 return (
     <div>
         <div className="peminjaman-container">
@@ -283,10 +282,35 @@ return (
 
 
 
-function Komputer({ selectedImageIdz, data }) {
-    const [jumlahpc, setJumlahPc] = useState(data ? data.jumlah_komputer : 31);
+function Komputer({ selectedImageIdz }) {
+    const handleButtonAClick = async () => {
+        setButtonAPressed(true);
+        
+        const updatedPeminjaman = Object.fromEntries(
+            Object.entries(peminjaman).map(([key, value]) => {
+                if (value === 2) {
+                    return [key, 0]; // Mengubah biru (2) menjadi kuning (0)
+                }
+                return [key, value];
+            })
+        );
+    
+        setPeminjaman(updatedPeminjaman);
+    
+        try {
+            const response = await axios.post('http://localhost:8000/api/addpeminjaman', updatedPeminjaman);
+            console.log('Data telah dikirim ke database:', response.data);
+            // Lakukan tindakan setelah berhasil mengirim data ke backend, jika diperlukan
+        } catch (error) {
+            console.error('Gagal mengirim data ke database:', error);
+            // Tangani kesalahan saat mengirim permintaan ke server
+        }
+    };
+    
+    
+    const [jumlahpc, setJumlahPc] = useState(31); // Nilai default jika tidak ada data
     const [buttonColors, setButtonColors] = useState(new Array(jumlahpc).fill("#3498db"));
-  
+    
     useEffect(() => {
       const fetchJumlahKomputer = async () => {
         try {
@@ -337,7 +361,13 @@ function Komputer({ selectedImageIdz, data }) {
       );
     }
   
-    return <div>{buttons}</div>;
+    return (
+      <div>
+        {/* Menampilkan jumlah komputer yang diperoleh dari database */}
+        <p>Jumlah Komputer: {jumlahpc}</p>
+        <div>{buttons}</div>
+      </div>
+    );
   }
 
 

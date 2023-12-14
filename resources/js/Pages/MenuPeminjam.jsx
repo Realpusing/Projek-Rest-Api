@@ -5,52 +5,50 @@ import axios from "axios";
 
 function Carousel() {
     const [carouselItems, setCarouselItems] = useState([]);
-
+  
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(
-                    "http://localhost:8000/api/kelas_tampil",
-                );
-                const data = response.data;
-                const items = data.map((menupeminjaman, index) => (
-                    <div
-                        className="carousel-item"
-                        key={`item-${index}`}
-                        onClick={() => handleImageClick(menupeminjaman.id)} // Handle click on image
-                    >
-                        <img
-                            style={{
-                                width: "300px",
-                                height: "500px",
-                                marginLeft: "10px",
-                                borderRadius: "20px",
-                                cursor: "pointer", // Add pointer cursor to indicate clickable element
-                            }}
-                            src={`http://localhost:8000/api/ambil-gambar/${menupeminjaman.fotoke}`}
-                            alt={`Item ${index}`}
-                        />
-                    </div>
-                ));
-
-                setCarouselItems(items);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    const handleImageClick = (id) => {
-        console.log(`Image clicked with ID: ${id}`);
-        window.location.href = `http://127.0.0.1:8000/peminjaman`;
+      const fetchData = async () => {
+        try {
+          const response = await axios.get("http://localhost:8000/api/kelas_tampil");
+          const data = response.data;
+          const items = data.map((menupeminjaman, index) => (
+            <div
+              className="carousel-item"
+              key={`item-${index}`}
+              onClick={() => handleImageClick(menupeminjaman.id)} // Handle click on image
+            >
+              <img
+                style={{
+                  width: "300px",
+                  height: "500px",
+                  marginLeft: "10px",
+                  borderRadius: "20px",
+                  cursor: "pointer",
+                }}
+                src={`http://localhost:8000/api/ambil-gambar/${menupeminjaman.fotokelas}`}
+                alt={`Item ${index}`}
+              />
+            </div>
+          ));
+  
+          setCarouselItems(items);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
       };
-
+  
+      fetchData();
+    }, []);
+  
+    const handleImageClick = (id) => {
+      console.log(`Image clicked with ID: ${id}`);
+      window.location.href = `http://127.0.0.1:8000/peminjaman?id=${id}`; // Add ID as query parameter
+    };
+  
     return (
-        <div className="carousel carousel-end rounded-box">{carouselItems}</div>
+      <div className="carousel carousel-end rounded-box">{carouselItems}</div>
     );
-}
+  }
 
 export default function Homepage(proops) {
     console.log(proops);

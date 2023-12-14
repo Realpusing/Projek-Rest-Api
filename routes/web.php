@@ -15,29 +15,36 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/', function () {
+    return Inertia::render('MenuPeminjam');
+})->middleware(['auth', 'verified','role:user'])->name('MenuPeminjam');
+
 Route::get('/test',function(){
     return Inertia::render('test');
-})->name('test');
+})->middleware(['auth', 'verified'])->name('test');
 
 
 
 Route::get('/peminjaman',function(){
     return Inertia::render('Peminjaman');
-})->name('Peminjaman');
+})->middleware(['auth', 'verified'])->name('Peminjaman');
 
 Route::get('/adminn',function(){
     return Inertia::render('Dashboard');
-   })-> name('Dashboard');
+   })->middleware(['auth', 'verified'])-> name('Dashboard');
 
 
 Route::get('/menupeminjaman',function(){
     return Inertia::render('MenuPeminjam');
-})->name('MenuPeminjaman');
-Route::get('/', function () {
-    return Inertia::render(('Homepage'));
-});
+})->middleware(['auth', 'verified'])->name('MenuPeminjaman');
+// Route::get('/', function () {
+//     return Inertia::render(('Homepage'));
+// });
 
 Route::get('/menu','kelasController@kelastampil');
+
+
 
 
 Route::get('welcome', function () {

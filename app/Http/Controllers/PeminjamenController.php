@@ -9,25 +9,40 @@ class PeminjamenController extends Controller
 {
     public function peminjamentampil()
     {
-        $peminjaman=Peminjamens::all();
-        $user=users::all();
-        
-       return $peminjaman;
+        // Mengambil data peminjaman dengan user terkait
+        $peminjaman = Peminjamens::with('user')->get();
+        return response()->json($peminjaman);
     }
+
     public function addpeminjmanes(Request $req)
     {
-        $peminjamens= new Peminjamens;
-        $peminjamens->idkomputer =$req ->input('idkomputer');
-        $peminjamens->idkelas =$req -> input ('idkelas');
-        $peminjamens->iduser =$req-> input('iduser');
-        $peminjamens->idadmin =$req-> input('idadmin');
-        $peminjamens->jumlahPinjam =$req-> input('jumlahPinjam');
-        $peminjamens->alasan =$req-> input('alasan');
-        $peminjamens->status =$req-> input('status');
-        $peminjamens->tanggal_dan_jam_pinjam = $req->input('tanggal_dan_jam_pinjam');
-        $peminjamens->tanggal_dan_jam_kembali = $req->input('tanggal_dan_jam_kembali');
+        // Validasi input sebelum menyimpan ke dalam database
+        $req->validate([
+            'idkomputer' => 'required',
+            'idkelas' => 'required',
+            'iduser' => 'required',
+            'idadmin' => 'required',
+            'jumlahPinjam' => 'required',
+            'alasan' => 'required',
+            'status' => 'required',
+            'tanggal_dan_jam_pinjam' => 'required',
+            'tanggal_dan_jam_kembali' => 'required',
+        ]);
 
-        $peminjamens->save();
-        return $req->input();
+        $peminjaman = new Peminjamens();
+        $peminjaman->idkomputer = $req->input('idkomputer');
+        $peminjaman->idkelas = $req->input('idkelas');
+        $peminjaman->iduser = $req->input('iduser');
+        $peminjaman->idadmin = $req->input('idadmin');
+        $peminjaman->jumlahPinjam = $req->input('jumlahPinjam');
+        $peminjaman->alasan = $req->input('alasan');
+        $peminjaman->status = $req->input('status');
+        $peminjaman->tanggal_dan_jam_pinjam = $req->input('tanggal_dan_jam_pinjam');
+        $peminjaman->tanggal_dan_jam_kembali = $req->input('tanggal_dan_jam_kembali');
+
+        $peminjaman->save();
+        return response()->json(['message' => 'Data peminjaman berhasil disimpan'], 201);
     }
 }
+
+
