@@ -54,7 +54,7 @@ function Tabel() {
         // Contoh data dari database (gunakan data dari database Anda)
         "2023-12-14": 1,
         "2023-12-13": 0,
-        "2023-12-16": 2,
+        "2023-12-1": 2,
     };
 
     useEffect(() => {
