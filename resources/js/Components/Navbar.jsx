@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import "./Nabar.css";
 
 const Navbar = ({ user, toggleSidebar }) => {
     
@@ -6,7 +7,6 @@ const Navbar = ({ user, toggleSidebar }) => {
         <nav>
             <div
                 className="navbar bg-base-100"
-                style={{ backgroundColor: "navy", color: "white" }}
             >
                 <div className="flex-1">
                     <a className="btn btn-ghost normal-case text-xl">
@@ -14,7 +14,7 @@ const Navbar = ({ user, toggleSidebar }) => {
                             <img src="asett/sadhar.png" />
                         </div>
                     </a>
-                    <div>
+                    <div className="fontNavbar">
                         <h1>
                             <b>Informatika</b>
                         </h1>

@@ -1,0 +1,7 @@
+.gambar{
+        width: 250px;
+        height: 350px;
+        margin-left: 10px;
+        border-radius: 20px;
+        cursor: pointer;
+}
