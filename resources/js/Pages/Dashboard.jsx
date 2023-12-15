@@ -82,6 +82,7 @@ function ProfilKelas() {
                             id="namakelas"
                             value={namakelas}
                             onChange={handleNameChange}
+                            
                         />
                     </label>
                     <br />
@@ -125,9 +126,9 @@ function ProfilKelas() {
 
 const Dashboard = (props) => {
     const [content, setContent] = useState(null);
-    const [name, setName] = useState("...");
-    const [phone, setPhone] = useState("...");
-    const [email, setEmail] = useState("...");
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [image, setImage] = useState(null);
 
@@ -402,6 +403,7 @@ function Tabel() {
                                 type="text"
                                 value={name}
                                 onChange={handleNameChange}
+                                placeholder="Input Nama anda"
                             />
                         </label>
                         <br />
@@ -411,6 +413,7 @@ function Tabel() {
                                 type="text"
                                 value={phone}
                                 onChange={handlePhoneChange}
+                                placeholder="Input No Telepon Anda "
                             />
                         </label>
                         <br />
@@ -420,6 +423,7 @@ function Tabel() {
                                 type="email"
                                 value={email}
                                 onChange={handleEmailChange}
+                                placeholder="Input Email Anda"
                             />
                         </label>
                         <br />
@@ -429,6 +433,7 @@ function Tabel() {
                                 type="password"
                                 value={password}
                                 onChange={handlePasswordChange}
+                                placeholder="password"
                             />
                         </label>
                         <br />
@@ -438,6 +443,7 @@ function Tabel() {
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
+                                placeholder="Pilih Gambar"
                             />
                         </label>
                         <br />
