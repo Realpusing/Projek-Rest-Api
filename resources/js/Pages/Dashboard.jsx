@@ -235,61 +235,155 @@ const Dashboard = (props) => {
 }
     
 
-    function Tabel() {
-        const [dataPeminjaman, setDataPeminjaman] = useState([]);
+function Tabel() {
+    const [dataPeminjaman, setDataPeminjaman] = useState([]);
+    const [acceptedIds, setAcceptedIds] = useState([]);
+  
+    const handleAccept = async (dataId) => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/peminzam/${dataId}/accept`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: '1' }),
+        });
+  
+        if (response.ok) {
+          console.log('Status berhasil diubah');
+          setAcceptedIds([...acceptedIds, dataId]);
+        } else {
+          console.error('Gagal mengubah status');
+        }
+      } catch (error) {
+        console.error('Terjadi kesalahan:', error);
+      }
+    };
+  
+    const handleReject = async (dataId) => {
+        try {
+          const response = await fetch(`http://localhost:8000/api/peminzam/${dataId}/reject`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: '0' }),
+          });
     
-        useEffect(() => {
-            fetch('http://localhost:8000/api/peminjamen') // Pastikan URL endpoint API sesuai
-                .then(response => response.json())
-                .then(data => {
-                    // Pastikan struktur data yang diterima sesuai dengan yang diharapkan
-                    setDataPeminjaman(data);
-                })
-                .catch(error => {
-                    console.error('Terjadi kesalahan saat mengambil data:', error);
-                });
-        }, []);
-    
-        return (
-            <div className="table-container">
-               
-                <table className="styled-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Peminjam</th>
-                            <th>NIM</th>
-                            <th>Alasan Peminjaman atau Pembatalan</th>
-                            <th>Jumlah Dipinjam</th>
-                            <th>Tanggal & Jam Peminjaman</th>
-                            <th>Tanggal & Jam Kembali</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {dataPeminjaman.map((data, index) => (
-                            <tr key={index}>
-                                <td>{data.id}</td>
-                                <td>{data.iduser.name || '-'}</td>
-                                <td>{data.iduser.nim || '-'}</td>
-
-                                <td>{data.alasan}</td>
-                                <td>{data.jumlahPinjam}</td>
-                                <td>{data.tanggal_dan_jam_pinjam}</td>
-                                <td>{data.tanggal_dan_jam_kembali}</td>
-                                <td>  
-                                <div style={{ display: 'flex', gap: '5px' }}>
-                                    <button style={{ backgroundColor: 'red', padding: '8px 12px', borderRadius: '5px', border: 'none' }}>Menerima </button>
-                                    <button style={{ backgroundColor: 'green', padding: '8px 12px', borderRadius: '5px', border: 'none' }}>Menolak </button>
-                                </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
+          if (response.ok) {
+            console.log('Status berhasil diubah');
+            const updatedData = dataPeminjaman.filter((data) => data.id !== dataId);
+            setDataPeminjaman(updatedData);
+          } else {
+            console.error('Gagal mengubah status');
+          }
+        } catch (error) {
+          console.error('Terjadi kesalahan:', error);
+        }
+      };
+  
+    useEffect(() => {
+      fetch('http://localhost:8000/api/peminjamez')
+        .then(response => response.json())
+        .then(data => {
+          setDataPeminjaman(data);
+        })
+        .catch(error => {
+          console.error('Terjadi kesalahan saat mengambil data:', error);
+        });
+    }, []);
+  
+    return (
+        <div className="table-container">
+          <table className="styled-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Peminjam</th>
+                <th>NIM</th>
+                <th>Alasan Peminjaman atau Pembatalan</th>
+                <th>Jumlah Dipinjam</th>
+                <th>Tanggal & Jam Peminjaman</th>
+                <th>Tanggal & Jam Kembali</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dataPeminjaman.map((data, index) => (
+                <tr key={index}>
+                  <td>{data.id}</td>
+                  <td>{data.iduser.name || '-'}</td>
+                  <td>{data.iduser.nim || '-'}</td>
+                  <td>{data.alasan}</td>
+                  <td>{data.jumlahPinjam}</td>
+                  <td>{data.tanggal_dan_jam_pinjam}</td>
+                  <td>{data.tanggal_dan_jam_kembali}</td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                      {data.status !== 0 ? (
+                        <div
+                          style={{
+                            backgroundColor: 'green',
+                            padding: '8px',
+                            borderRadius: '5px',
+                            color: 'white',
+                          }}
+                        >
+                          Disetujui
+                        </div>
+                      ) : (
+                        <>
+                          {!acceptedIds.includes(data.id) && (
+                            <>
+                              <button
+                                style={{
+                                  backgroundColor: 'green',
+                                  padding: '8px 12px',
+                                  borderRadius: '5px',
+                                  border: 'none',
+                                  color: 'white',
+                                }}
+                                onClick={() => handleAccept(data.id)}
+                              >
+                                Menerima
+                              </button>
+                              <button
+                                style={{
+                                  backgroundColor: 'red',
+                                  padding: '8px 12px',
+                                  borderRadius: '5px',
+                                  border: 'none',
+                                  color: 'white',
+                                }}
+                                onClick={() => handleReject(data.id)}
+                              >
+                                Menolak
+                              </button>
+                            </>
+                          )}
+                          {acceptedIds.includes(data.id) && (
+                            <div
+                              style={{
+                                backgroundColor: 'green',
+                                padding: '8px',
+                                borderRadius: '5px',
+                                color: 'white',
+                              }}
+                            >
+                              Disetujui
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+  }
     
    
     

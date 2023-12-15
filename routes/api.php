@@ -19,5 +19,7 @@ Route::get('peminjamen', [PeminjamenController::class, 'peminjamentampil']);
 Route::get('peminjamez', [PeminjamenController::class, 'pemitampil']);
 
 Route::get('komputer/{id}', [Kelas_Controller::class, 'ambilid']);
-
+Route::put('/peminzam/{dataId}/accept',[PeminjamenController::class, 'acceptPeminzam']);
 Route::post('addpeminjaman', [PeminjamenController::class, 'addpeminjmanes']);
+Route::put('/peminzam/{dataId}/reject', [PeminjamenController::class, 'rejectPeminzam']);
+
