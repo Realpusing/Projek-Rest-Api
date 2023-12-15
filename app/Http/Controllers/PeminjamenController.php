@@ -17,7 +17,33 @@ class PeminjamenController extends Controller
     {
         return Peminjamens::all();
     }
+
+    public function acceptPeminzam($dataId)
+    {
+        try {
+            $peminzam = Peminjamens::findOrFail($dataId);
+            $peminzam->status = 1; // Ganti status sesuai kebutuhan
+            
+            $peminzam->save();
+            
+            return response()->json(['message' => 'Status berhasil diubah']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal mengubah status'], 500);
+        }
+    }
+    public function rejectPeminzam($dataId)
+    {
+        try{
+            $peminjaman = Peminjamens::findOrFail($dataId);
+            $peminjaman->delete(); // Hapus data peminjaman
     
+            return response()->json(['message' => 'Data berhasil dihapus']);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Gagal mengubah status'], 500);
+
+        }
+       
+    }
 
     public function addpeminjmanes(Request $req)
     {
