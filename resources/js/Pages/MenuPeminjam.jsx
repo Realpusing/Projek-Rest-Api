@@ -2,6 +2,7 @@ import Navbar from "@/Components/Navbar";
 import { Head } from "@inertiajs/react"
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./MenuPeminjaman.css"
 
 function Carousel() {
     const [carouselItems, setCarouselItems] = useState([]);
@@ -17,14 +18,7 @@ function Carousel() {
               key={`item-${index}`}
               onClick={() => handleImageClick(menupeminjaman.id)} // Handle click on image
             >
-              <img
-                style={{
-                  width: "300px",
-                  height: "500px",
-                  marginLeft: "10px",
-                  borderRadius: "20px",
-                  cursor: "pointer",
-                }}
+              <img className="gambar"
                 src={`http://localhost:8000/api/ambil-gambar/${menupeminjaman.fotokelas}`}
                 alt={`Item ${index}`}
               />

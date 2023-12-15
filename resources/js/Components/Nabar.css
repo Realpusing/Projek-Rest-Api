@@ -1,0 +1,9 @@
+.navbar {
+    background-color: #A52A2A; /* Atau background-color: rgb(165, 42, 42); */
+    font-size: 18px; /* Ubah ukuran font sesuai keinginan */
+    font-weight: bold; /* Buat font lebih tebal */ 
+    color: black;
+}
+.fontNavbar{
+    color: white;
+}
