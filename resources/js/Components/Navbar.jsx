@@ -4,10 +4,9 @@ import "./Nabar.css";
 const Navbar = ({ user, toggleSidebar }) => {
     
     return (
-        <nav>
-            <div
-                className="navbar bg-base-100"
-            >
+        <nav className="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0 px-4 px-lg-5 shadow-sm ">
+            
+                
                 <div className="flex-1">
                     <a className="btn btn-ghost normal-case text-xl">
                         <div className="w-10 rounded-full">
@@ -76,7 +75,7 @@ const Navbar = ({ user, toggleSidebar }) => {
                         )}
                     </ul>
                 </div>
-            </div>
+            
         </nav>
     );
 };

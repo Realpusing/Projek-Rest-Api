@@ -5,3 +5,33 @@
         border-radius: 20px;
         cursor: pointer;
 }
+.fontLab{
+        font-size: 20px;
+        font-style: italic;
+        margin-top: 10px;
+        padding-left: 50px;
+        font-weight: bold;
+        padding-top: 70px;
+}
+.aboutContent{
+        background-color: #A52A2A;
+        border-radius: 20px;
+        color: white;
+        margin-top: 20px;
+        padding: 60px;
+        width: auto;
+        margin: 20px 20px;
+        text-align: center;
+}
+.aboutHead{
+        font-size: 20px;
+        font-style: italic;
+}
+.aboutP{
+        margin-top: 20px;
+        padding-left: 50px;
+}
+.background{
+        background-repeat: no-repeat;
+        background-size: cover;
+}

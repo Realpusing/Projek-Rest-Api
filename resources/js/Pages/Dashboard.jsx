@@ -495,8 +495,9 @@ function Tabel() {
 
     return (
         <div className="dashboard-layout">
-            <Head title="Foundasi-App" />
+            <Head title="Project Rest API" />
             <Navbar user={props.auth.user} />
+
             <div className="content-wrapper">
                 <aside className="sidebar">
                     <ul className="sidebar-menu">
