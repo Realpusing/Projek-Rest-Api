@@ -5,6 +5,7 @@
 .peminjaman-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
 }
 
 .peminjaman-table th,
@@ -17,4 +18,8 @@
 .peminjaman-table th {
     background-color: #3498db;
     color: #fff;
+}
+.fontJk{
+    padding-left: 50px;
+    padding-top: 70px;
 }

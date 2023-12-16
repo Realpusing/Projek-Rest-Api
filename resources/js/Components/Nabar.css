@@ -3,6 +3,11 @@
     font-size: 18px; /* Ubah ukuran font sesuai keinginan */
     font-weight: bold; /* Buat font lebih tebal */ 
     color: black;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    position: fixed;
 }
 .fontNavbar{
     color: white;
