@@ -11,7 +11,7 @@ const Navbar = ({ user }) => {
                     <h1>Universitas Sanata Dharma</h1>
                 </div>
                 <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-                    <form onSubmit={} className="card-body">
+                    <form  className="card-body">
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">Email</span>
