@@ -39,11 +39,7 @@ function Tabel() {
         new Array(jumlahpc).fill("#3498db"),
     );
 
-    const [dataPeminjaman, setDataPeminjaman] = useState({}); // State untuk menyimpan data peminjaman
-
-    const handleSimpanAlasan = () => {
-        // Menyimpan data alasan peminjaman ke dalam objek dataPeminjaman
-    };
+    
     //komputer
     useEffect(() => {
         const search = window.location.search;
@@ -132,48 +128,66 @@ function Tabel() {
     const hours = Array.from({ length: 8 }, (_, index) => index + 8);
     const [peminjaman, setPeminjaman] = useState({});
     const [buttonAPressed, setButtonAPressed] = useState(false);
-    const [history, setHistory] = useState([]);
+
 
     // Simulasi data dari database
     useEffect(() => {
+        const search = window.location.search;
+        const params = new URLSearchParams(search);
+        const idFromURL = parseInt(params.get("id"));
         const fetchData = async () => {
             try {
                 const response = await axios.get(
                     "http://localhost:8000/api/peminjamez",
                 );
                 const { data } = response;
-
-                const formattedData = data.map((item) => {
-                    const { tanggal_dan_jam_pinjam } = item;
-                    return `${tanggal_dan_jam_pinjam}`;
-                });
-
-                return formattedData;
+    
+                const filteredData = data.filter(item => item.idkelas === idFromURL);
+    
+                if (filteredData.length > 0) {
+                    const formattedData = filteredData.map((item) => {
+                        const { tanggal_dan_jam_pinjam } = item;
+                        return `${tanggal_dan_jam_pinjam}`;
+                    });
+    
+                    return formattedData;
+                } else {
+                    console.log("Data tidak ditemukan untuk idkelas yang dimaksud.");
+                    return [];
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
                 return [];
             }
         };
-
+    
         const stats = async () => {
             try {
                 const response = await axios.get(
                     "http://localhost:8000/api/peminjamez",
                 );
                 const { data } = response;
-
-                const statusData = data.map((item) => {
-                    const { status } = item;
-                    return `${status}`;
-                });
-
-                return statusData;
+    
+                // Filter data berdasarkan idkelas yang diinginkan (misalnya, idkelas = 4)
+                const filteredData = data.filter(item => item.idkelas ===idFromURL );
+    
+                if (filteredData.length > 0) {
+                    const statusData = filteredData.map((item) => {
+                        const { status } = item;
+                        return `${status}`;
+                    });
+    
+                    return statusData;
+                } else {
+                    console.log("Data tidak ditemukan untuk idkelas yang dimaksud.");
+                    return [];
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
                 return [];
             }
         };
-
+    
         Promise.all([fetchData(), stats()])
             .then(([fetchDataResult, statsResult]) => {
                 if (
@@ -189,7 +203,7 @@ function Tabel() {
                             statsResult[index],
                         );
                     });
-
+    
                     console.log(dataFromDatabase);
                     setPeminjaman(dataFromDatabase);
                 } else {
