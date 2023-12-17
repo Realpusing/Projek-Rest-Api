@@ -6,12 +6,7 @@ body {
     color: #333;
 }
 
-/* Dashboard layout */
-/* .dashboard-layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 200vh;
-} */
+
 
 .content-wrapper {
     display: flex;
