@@ -38,6 +38,10 @@ function Tabel() {
     const [buttonColors, setButtonColors] = useState(
         new Array(jumlahpc).fill("#3498db"),
     );
+    const [dataPeminjaman, setDataPeminjaman] = useState({
+        alasanPeminjaman: '',
+        // ...properti lain dari state Anda
+      });
 
     
     //komputer
@@ -109,6 +113,7 @@ function Tabel() {
             </button>,
         );
     }
+    
     const today = new Date();
     today.setDate(today.getDate() + 1); // Menambah satu hari ke tanggal saat ini
     const [updatedPeminjaman, setUpdatedPeminjaman] = useState({});
@@ -259,12 +264,14 @@ function Tabel() {
     };
 
     const handleButtonAClick = async () => {
+        
+
         const formData = new FormData();
 
         setDataPeminjaman((prevData) => ({
             ...prevData,
             alasanPeminjaman: alasanPeminjaman,
-        }));
+          }));
 
         // Reset input alasan peminjaman setelah disimpan
         console.log(alasanPeminjaman);
@@ -325,10 +332,10 @@ function Tabel() {
 
         console.log("Tabel kuning end:", tabelKuningEnd);
         for (let i = 0; i < tabelKuning.length; i++) {
-            formData.append("idkomputer", 1);
+            formData.append("idkomputer", 2);
             formData.append("idkelas", selectedImageIdz);
             formData.append("iduser", 1);
-            formData.append("idadmin", 1);
+            formData.append("idadmin", 2);
             formData.append("jumlahPinjam", jumlahButtonDitekan);
             formData.append("alasan", alasanPeminjaman);
             formData.append("status", 0);
@@ -349,6 +356,8 @@ function Tabel() {
                 console.error("Gagal mengirim data ke database:", error);
             }
         }
+
+        window.location.reload();
     };
 
     const inputStyle = {
@@ -363,6 +372,7 @@ function Tabel() {
     };
     return (
         <div>
+            
             <div
                 className="d-flex p-3"
                 style={{ marginTop: "20px", paddingLeft: "50px" }}
@@ -624,6 +634,9 @@ export default function Homepage(proops) {
                     <Tabel />
                 </tabel>
             </div>
+            
         </div>
+
+        
     );
 }

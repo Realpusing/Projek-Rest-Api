@@ -10,7 +10,7 @@ const Navbar = ({ user, toggleSidebar }) => {
                 <div className="flex-1">
                     <a className="btn btn-ghost normal-case text-xl">
                         <div className="w-10 rounded-full">
-                            <img src="asett/sadhar.png" />
+                            <img src="asett/sadhar1.png" />
                         </div>
                     </a>
                     <div className="fontNavbar">
