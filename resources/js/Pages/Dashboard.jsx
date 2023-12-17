@@ -241,6 +241,12 @@ function Tabel() {
     const [acceptedIds, setAcceptedIds] = useState([]);
   
     const handleAccept = async (dataId) => {
+        try {
+            const response = await axios.get("http://localhost:8000/api/email");
+            console.log("Response:", response.data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
       try {
         const response = await fetch(`http://localhost:8000/api/peminzam/${dataId}/accept`, {
           method: 'PUT',
