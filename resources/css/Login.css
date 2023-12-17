@@ -1,0 +1,51 @@
+/* Homepage.css */
+
+/* Style untuk tata letak dashboard */
+.dashboard-layout {
+    display: flex;
+    flex-direction: column; /* Mengatur tata letak ke arah kolom */
+    height: 100vh; /* Menggunakan seluruh tinggi layar */
+}
+
+/* Style untuk Navbar */
+/* Tambahkan gaya CSS yang diperlukan untuk Navbar sesuai dengan kebutuhan */
+
+/* Konten Dashboard */
+.content-wrapper {
+    display: flex;
+    flex: 1;
+    margin-top: 20px; /* Jarak antara Navbar dan Content */
+}
+
+/* Style untuk sidebar */
+.sidebar {
+    max-width: 16.25rem !important;
+    background-color: #f5f7f8;
+    color: #333;
+    padding: 20px;
+    margin-left: 20px; /* Menambahkan margin kiri */
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 10px;
+}
+
+.sidebar-menu li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Style untuk konten utama */
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
